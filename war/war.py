@@ -19,12 +19,36 @@ class Deck:
         self.p2_card = self.deck2.pop(1)
         return self.p1_card, self.p2_card
 
-    def reveal(self):
-        cards_in_play = [self.p1_card, self.p2_card]
+    def war(self):
+        self.p1_card_facedown = self.deck1.pop(1)
+        self.p1_card_faceup = self.deck1.pop(1)
+        self.p2_card_facedown = self.deck2.pop(1)
+        self.p2_card_faceup = self.deck2.pop(1)
 
+        if self.p1_card_faceup > self.p2_card_faceup:
+            self.deck1.append(self.p1_card)
+            self.deck1.append(self.p1_card_facedown)
+            self.deck1.append(self.p1_card_faceup)
+            self.deck1.append(self.p2_card)
+            self.deck1.append(self.p2_card_facedown)
+            self.deck1.append(self.p2_card_faceup)
+        elif self.p1_card_faceup < self.p2_card_faceup:
+            self.deck2.append(self.p1_card)
+            self.deck2.append(self.p1_card_facedown)
+            self.deck2.append(self.p1_card_faceup)
+            self.deck2.append(self.p2_card)
+            self.deck2.append(self.p2_card_facedown)
+            self.deck2.append(self.p2_card_faceup)
+        return self.deck1, self.deck2
+
+    def reveal(self):
         if self.p1_card > self.p2_card:
-            self.deck1.append(cards_in_play)
+            self.deck1.append(self.p1_card)
+            self.deck1.append(self.p2_card)
         elif self.p2_card > self.p1_card:
-            self.deck2.append(cards_in_play)
+            self.deck2.append(self.p1_card)
+            self.deck2.append(self.p2_card)
+        else:
+            self.war()
         return self.deck1, self.deck2
         
