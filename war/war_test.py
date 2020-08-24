@@ -1,47 +1,55 @@
-import pytest
-import war as w
+import random as r
 
-# war is a game with one deck of cards, shufffled and split into two equal decks, and a card is revealed from each deck per turn, with the highest value card taking both cards in victory
+class Deck:
+    def __init__(self):
+        self.new_deck = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 12, 12, 12, 12, 13, 13, 13, 13]
+        self.deck1 = []
+        self.deck2 = []
+        self.p1_card = None
+        self.p2_card = None
 
-def test_deck():
-    #a deck should have 52 cards, 13 different cards of 4 suits
-    d = w.Deck()
-    assert len(d.new_deck) == 52
+    def deal(self):
+        r.shuffle(self.new_deck)
+        self.deck1 = self.new_deck[0:25]
+        self.deck2 = self.new_deck[26:51]
+        return self.deck1, self.deck2
 
-def test_deal():
-    # a successfull deal should have the deck split into two equal smaller decks
-    d = w.Deck()
-    d.deal()
+    def draw(self):
+        self.p1_card = self.deck1.pop(1)
+        self.p2_card = self.deck2.pop(1)
+        return self.p1_card, self.p2_card
 
-    assert len(d.deck1) == 25
-    assert len(d.deck2) == 25
+    def war(self):
+        self.p1_card_facedown = self.deck1.pop(1)
+        self.p1_card_faceup = self.deck1.pop(1)
+        self.p2_card_facedown = self.deck2.pop(1)
+        self.p2_card_faceup = self.deck2.pop(1)
 
-def test_draw():
-    # a successful draw would remove a card from each players deck and put it in the respective players hand
-    d= w.Deck()
-    d.deal()
+        if self.p1_card_faceup > self.p2_card_faceup:
+            self.deck1.append(self.p1_card)
+            self.deck1.append(self.p1_card_facedown)
+            self.deck1.append(self.p1_card_faceup)
+            self.deck1.append(self.p2_card)
+            self.deck1.append(self.p2_card_facedown)
+            self.deck1.append(self.p2_card_faceup)
+        elif self.p1_card_faceup < self.p2_card_faceup:
+            self.deck2.append(self.p1_card)
+            self.deck2.append(self.p1_card_facedown)
+            self.deck2.append(self.p1_card_faceup)
+            self.deck2.append(self.p2_card)
+            self.deck2.append(self.p2_card_facedown)
+            self.deck2.append(self.p2_card_faceup)
+        return self.deck1, self.deck2
 
-    #check hand is empty
-    assert d.p1_card is None
-    assert d.p2_card is None
-
-    d.draw()
-
-    # check removal from deck
-    assert len(d.deck1) == 24
-    assert len(d.deck2) == 24
-
-    #check if card in hand
-    assert d.p1_card is not None
-    assert d.p2_card is not None
-    
-def test_reveal():
-    # the player with the higher card wins the hand and both cards go to the winners deck
-    d = w.Deck()
-    d.deal()
-    d.draw()
-    d.reveal()
-
-    assert len(d.deck1) == 26 and len(d.deck2) == 24
-    assert len(d.deck2) == 26 and len(d.deck1) == 24
+    def reveal(self):
+        if self.p1_card > self.p2_card:
+            self.deck1.append(self.p1_card)
+            self.deck1.append(self.p2_card)
+        elif self.p2_card > self.p1_card:
+            self.deck2.append(self.p1_card)
+            self.deck2.append(self.p2_card)
+        else:
+            self.war()
+        return self.deck1, self.deck2
+        
 
